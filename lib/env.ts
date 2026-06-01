@@ -40,9 +40,20 @@ let cached: Env | null = null;
 
 export function env(): Env {
   if (cached) return cached;
-  const parsed = envSchema.safeParse(process.env);
+  // The .env.example template ships optional keys as empty strings (e.g. `CLIO_CLIENT_ID=`).
+  // After `cp .env.example .env.local` those arrive as "" — which is NOT undefined, so a bare
+  // `.optional()` still runs `.min(1)`/`.url()` and fails before the feature is even configured.
+  // Treat any empty-string env var as "unset" so optional features validate cleanly until you fill them in.
+  const raw = Object.fromEntries(
+    Object.entries(process.env).filter(([, v]) => v !== undefined && v !== ''),
+  );
+  const parsed = envSchema.safeParse(raw);
   if (!parsed.success) {
-    console.error('Invalid environment variables:', z.treeifyError(parsed.error));
+    const lines = parsed.error.issues.map((i) => `  - ${i.path.join('.') || '(root)'}: ${i.message}`);
+    console.error(
+      `Invalid environment variables in your .env.local:\n${lines.join('\n')}\n` +
+        `Fix the keys listed above (see .env.example / SETUP.md for the expected format).`,
+    );
     throw new Error('Invalid environment variables');
   }
   cached = parsed.data;
