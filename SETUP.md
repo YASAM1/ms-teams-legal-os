@@ -63,6 +63,13 @@ Install these on your machine:
   ```bash
   pnpm add -g vercel@latest
   ```
+  > **First time using pnpm globally?** If you see `ERROR: The configured global bin directory ... is not in PATH`, pnpm hasn't wired its global bin folder into your shell yet. Fix it once:
+  > ```bash
+  > pnpm setup          # writes PNPM_HOME + PATH into your ~/.zshrc (or ~/.bashrc)
+  > source ~/.zshrc     # reload your shell (or just open a new terminal tab)
+  > pnpm add -g vercel@latest   # re-run the install
+  > ```
+  > Any `@pnpm/exe ... Failed to create bin` warnings during `pnpm setup` are harmless — that's pnpm trying to reinstall itself; your `vercel` install still works. Verify with `vercel --version`.
 - A terminal and a code editor (VS Code is great).
 - *(Optional)* `uuidgen` for generating a Teams app ID — it ships with macOS/Linux. On Windows use PowerShell's `[guid]::NewGuid()`.
 
