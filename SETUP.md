@@ -2,7 +2,7 @@
 
 > **What you're setting up:** an AI operational teammate that lives inside Microsoft Teams. It triages Outlook email, summarizes threads, finds the right Clio matter from fuzzy text, drafts replies into Outlook, and proposes Clio notes — with a human approving every external action.
 >
-> This guide takes a freshly-unzipped copy of the project and walks you all the way to **typing `ping` in Teams and getting `pong` back**, then turning on the real features (Clio + Outlook).
+> This guide takes a fresh copy of the project (cloned or downloaded from GitHub) and walks you all the way to **typing `ping` in Teams and getting `pong` back**, then turning on the real features (Clio + Outlook).
 
 If you follow every step in order, you'll have a working install. Don't skip around — later steps depend on values you create in earlier ones.
 
@@ -52,9 +52,29 @@ Create these now so you're not interrupted later:
 
 ## 1. Local prerequisites
 
-Install these on your machine:
+You'll run everything from a **terminal**: on macOS open **Terminal** (Applications → Utilities → Terminal); on Windows use **PowerShell**. Grab a code editor too — **[VS Code](https://code.visualstudio.com)** is free and excellent.
 
-- **Node.js 20 LTS or newer** — https://nodejs.org (the project targets Node 20+; Node 24 is fine).
+Install the tools below **in order**. The macOS commands use **Homebrew** (the standard Mac package manager), so set that up first.
+
+- **Homebrew** *(macOS only — skip if `brew --version` already works):*
+  ```bash
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+  When it finishes, run the two **"Next steps"** commands it prints. On Apple-Silicon Macs that's the line starting `eval "$(/opt/homebrew/bin/brew shellenv)"` — it puts `brew` on your PATH. Verify with `brew --version`.
+
+- **git** — needed to download the project:
+  ```bash
+  git --version          # if this already prints a version, skip the install
+  brew install git       # macOS (may trigger Apple's "Command Line Tools" prompt — accept it)
+  # Windows: install from https://git-scm.com/download/win
+  ```
+
+- **Node.js 20 LTS or newer** (Node 24 is fine):
+  ```bash
+  brew install node      # macOS
+  # any OS: or download the LTS installer from https://nodejs.org
+  ```
+
 - **pnpm** (this project uses pnpm, not npm):
   ```bash
   npm install -g pnpm
@@ -70,24 +90,38 @@ Install these on your machine:
   > pnpm add -g vercel@latest   # re-run the install
   > ```
   > Any `@pnpm/exe ... Failed to create bin` warnings during `pnpm setup` are harmless — that's pnpm trying to reinstall itself; your `vercel` install still works. Verify with `vercel --version`.
-- A terminal and a code editor (VS Code is great).
-- *(Optional)* `uuidgen` for generating a Teams app ID — it ships with macOS/Linux. On Windows use PowerShell's `[guid]::NewGuid()`.
+- *(Optional)* `uuidgen` for generating a Teams app ID later (Part 8) — it ships with macOS/Linux. On Windows use PowerShell's `[guid]::NewGuid()`.
 
-Verify:
+Verify everything is installed:
 ```bash
-node -v      # v20+ 
+git --version
+node -v      # v20+
 pnpm -v
 vercel --version
 ```
 
 ---
 
-## 2. Unzip and install
+## 2. Get the code and install
 
+Pick **one** way to download the project. If you're new to all this, Option A is the standard path.
+
+**Option A — clone with git (recommended):**
 ```bash
-# unzip the giveaway file wherever you keep projects
+# go to wherever you keep projects (your home folder is fine), then:
+cd ~
+git clone https://github.com/YASAM1/ms-teams-legal-os.git
 cd ms-teams-legal-os
+```
 
+**Option B — download a ZIP (no git required):**
+On the GitHub page, click the green **Code** button → **Download ZIP**. Unzip it, then in your terminal `cd` into the unzipped folder, e.g.:
+```bash
+cd ~/Downloads/ms-teams-legal-os-main
+```
+
+Then, from inside the project folder, install dependencies and create your local env file:
+```bash
 # install dependencies
 pnpm install
 
