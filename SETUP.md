@@ -104,30 +104,47 @@ vercel --version
 
 ## 2. Get the code and install
 
-Pick **one** way to download the project. If you're new to all this, Option A is the standard path.
+Pick **one** way to get the project onto your computer. Both finish with a **Terminal window open *inside* the project folder** — that's the goal. The steps below are click-by-click for **macOS**; raw commands are shown too so Windows/Linux users can follow.
 
-**Option A — clone with git (recommended):**
-```bash
-# go to wherever you keep projects (your home folder is fine), then:
-cd ~
-git clone https://github.com/YASAM1/ms-teams-legal-os.git
-cd ms-teams-legal-os
-```
+### First, a trick you'll use a lot: open a Terminal *inside* a folder
 
-**Option B — download a ZIP (no git required):**
-On the GitHub page, click the green **Code** button → **Download ZIP**. Unzip it, then in your terminal `cd` into the unzipped folder, e.g.:
-```bash
-cd ~/Downloads/ms-teams-legal-os-main
-```
+The reliable way that needs no setup:
+1. Open **Terminal** — press **⌘-Space**, type `Terminal`, press **Enter**.
+2. Type `cd ` (the letters `c`, `d`, then a **space**) — *don't* press Enter yet.
+3. **Drag the folder** from Finder/Desktop into the Terminal window. Its path appears automatically.
+4. Press **Enter**. You're now "inside" that folder.
 
-Then, from inside the project folder, install dependencies and create your local env file:
+> Prefer right-clicking? You can enable **right-click a folder → New Terminal at Folder**: open **System Settings → Keyboard → Keyboard Shortcuts → Services → Files and Folders**, tick **New Terminal at Folder**. (It's off by default, which is why the drag trick above is the safe bet.)
+
+### Option A — clone with git (recommended)
+
+1. **Make a folder for your projects.** Right-click your **Desktop** → **New Folder** → name it `projects` (or anything).
+2. **Open a Terminal inside that `projects` folder** using the drag trick above.
+3. **Download the code** — paste this and press **Enter**:
+   ```bash
+   git clone https://github.com/YASAM1/ms-teams-legal-os.git
+   ```
+   This creates a new `ms-teams-legal-os` folder inside `projects`.
+4. **Move into it:**
+   ```bash
+   cd ms-teams-legal-os
+   ```
+
+### Option B — download a ZIP (no git needed)
+
+1. On the GitHub page, click the green **Code** button → **Download ZIP**.
+2. The ZIP lands in your **Downloads** folder. **Double-click it** — macOS unzips it into a folder called `ms-teams-legal-os-main`.
+3. *(Optional, tidier)* Right-click your **Desktop** → **New Folder**, then **drag** the unzipped `ms-teams-legal-os-main` folder onto the Desktop.
+4. **Open a Terminal inside that unzipped folder** using the drag trick above.
+
+### Then — install (both options)
+
+With your Terminal sitting **inside the project folder**, run:
 ```bash
-# install dependencies
 pnpm install
-
-# create your local env file from the template
 cp .env.example .env.local
 ```
+> **Am I in the right folder?** Run `ls` and press Enter — you should see `package.json`, `SETUP.md`, and a `lib` folder listed. If you don't, you're not inside the project folder yet — redo the drag trick on the correct folder.
 
 You'll fill in `.env.local` as you go. Keep it open in your editor. **Never commit `.env.local`** — it holds secrets.
 
