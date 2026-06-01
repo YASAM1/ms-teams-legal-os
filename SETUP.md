@@ -212,11 +212,29 @@ Note the production domain it prints (e.g. `https://legal-os-yourname.vercel.app
 ### 4.3 Provision Neon Postgres
 In the **Vercel dashboard** → your project → **Storage** → **Create Database** → **Neon** → connect it to the project (all environments).
 
-Vercel auto-injects `DATABASE_URL` (and related vars). Pull everything down to your machine:
-```bash
-vercel env pull .env.local
-```
-This merges the Vercel-managed vars (including `DATABASE_URL`) into your `.env.local`. Re-paste your §3 secrets if the pull overwrote them.
+Vercel auto-injects the database connection string. The **only** value you need from Vercel is `DATABASE_URL` — everything else in `.env.local` you set by hand.
+
+> ⚠️ **Do _not_ run `vercel env pull .env.local`.** That command **overwrites your entire `.env.local`**, wiping the secrets you just generated in Part 3 (and the template structure). Pulling at this stage would replace your file with only the database vars, and you'd lose `AUTH_SECRET`, `ENCRYPTION_KEY`, `CRON_SECRET`, etc. Use the safe steps below instead.
+
+**Safe way to grab just the database URL:**
+
+1. Pull Vercel's variables into a **separate, temporary** file (note the filename — *not* `.env.local`):
+   ```bash
+   vercel env pull .env.vercel
+   ```
+2. Open **both** `.env.vercel` and your `.env.local` in your editor (VS Code). In `.env.vercel`, find the line starting with `DATABASE_URL=` and **copy its whole value** (the long `postgres://...` string).
+3. In `.env.local`, paste that value over the `postgres://...` placeholder so the line becomes your real connection string:
+   ```ini
+   DATABASE_URL="postgres://...your real value pasted from .env.vercel..."
+   ```
+4. Delete the temporary file so it can't confuse you later:
+   ```bash
+   rm .env.vercel
+   ```
+
+> **Prefer clicking?** Instead of the CLI, open Vercel dashboard → your project → **Storage** → your database → the **`.env.local` / Quickstart** snippet, and copy the `DATABASE_URL` value straight into your `.env.local`. Same result, no temp file.
+
+From here on, treat **`.env.local` as your single hand-edited source of truth** — you'll keep adding values to it as you go (Parts 6, 7, 11, 12). You won't `vercel env pull` again; later you push your values *up* to Vercel (Part 9).
 
 ### 4.4 Get an AI Gateway key
 In the Vercel dashboard → **AI Gateway** → create an **API key**, and add a few dollars of credit. Put it in `.env.local`:
@@ -493,7 +511,7 @@ The four cron jobs are defined in `vercel.ts` and run automatically on Vercel:
 Tick these off in `.env.local` **and** on Vercel (all three environments):
 
 ```
-[ ] DATABASE_URL            ← auto-injected by Vercel/Neon
+[ ] DATABASE_URL            ← copy from Vercel into .env.local (don't `env pull` over the whole file — see §4.3)
 [ ] AI_GATEWAY_API_KEY      ← Vercel AI Gateway
 [ ] AUTH_SECRET             ← openssl rand -base64 32
 [ ] AUTH_TRUST_HOST=true
