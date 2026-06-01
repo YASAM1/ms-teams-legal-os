@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1779305915187,
+      "tag": "0000_neat_alex_wilder",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779306000000,
+      "tag": "0001_enable_pgvector_and_embeddings",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1779737821090,
+      "tag": "0002_add_last_reconciled_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1779995000000,
+      "tag": "0003_matter_token_budgets",
+      "breakpoints": true
+    }
+  ]
+}

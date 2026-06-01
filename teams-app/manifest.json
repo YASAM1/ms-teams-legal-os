@@ -1,0 +1,48 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.20/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.20",
+  "version": "1.2.0",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "developer": {
+    "name": "Your Company",
+    "websiteUrl": "https://your-domain.vercel.app",
+    "privacyUrl": "https://your-domain.vercel.app/privacy",
+    "termsOfUseUrl": "https://your-domain.vercel.app/terms"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "Legal Ops",
+    "full": "Legal Operations Agent"
+  },
+  "description": {
+    "short": "AI operational teammate for legal work.",
+    "full": "Drafts, summarizes, and routes work across Outlook, OneDrive, and Clio — human-in-the-loop on every external action."
+  },
+  "accentColor": "#1E40AF",
+  "bots": [
+    {
+      "botId": "00000000-0000-0000-0000-000000000000",
+      "scopes": ["personal", "team", "groupChat"],
+      "supportsFiles": true,
+      "isNotificationOnly": false,
+      "commandLists": [
+        {
+          "scopes": ["personal", "team", "groupChat"],
+          "commands": [
+            { "title": "find-matter", "description": "Search Clio for a matter by free text" },
+            { "title": "summarize-thread", "description": "Summarize an email thread — describe it in plain English" },
+            { "title": "intake", "description": "Create a new Clio matter from a free-form description (HITL approval)" },
+            { "title": "draft-reply", "description": "Draft a reply — describe the email in plain English, optionally add `-- <directive>`" },
+            { "title": "draft-new", "description": "Draft a brand-new outbound email and save it to Outlook Drafts" },
+            { "title": "today", "description": "Show today's digest" }
+          ]
+        }
+      ]
+    }
+  ],
+  "permissions": ["identity", "messageTeamMembers"],
+  "validDomains": ["your-domain.vercel.app"]
+}
