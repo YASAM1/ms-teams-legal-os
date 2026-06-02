@@ -395,18 +395,7 @@ Teams wants the manifest plus two small icons packed into a single `.zip` file.
 
 > `color.png` and `outline.png` are placeholder icons that already ship in the folder, so this just works. Want your own logo later? Replace those two files (a 192×192-pixel `color.png` and a 32×32-pixel `outline.png`) and run the `zip` command again.
 
-### 8.3 Allow custom app uploads (one-time, admin)
-
-By default Microsoft 365 blocks uploading your own apps. Turn that on once:
-
-1. Go to the **Teams Admin Center**: [admin.teams.microsoft.com](https://admin.teams.microsoft.com) and sign in with your admin account.
-2. In the left menu, click **Teams apps → Setup policies**.
-3. Click the **Global (Org-wide default)** policy.
-4. Find **Upload custom apps** and switch it **On**, then click **Save** at the bottom.
-
-> Already on? Then skip this — Microsoft 365 Developer Program tenants usually have it enabled. Note: a change here can take a few minutes to take effect.
-
-### 8.4 Upload the app into Teams
+### 8.3 Upload the app into Teams
 
 1. Open **Microsoft Teams**.
 2. In the left rail, click **Apps**.
