@@ -329,29 +329,91 @@ pnpm exec dotenv -e .env.local -- tsx scripts/smoke-bot-adapter.ts
 
 ## 8. Build and sideload the Teams app
 
-### 8.1 Edit the manifest
-Open `teams-app/manifest.json` and replace these with **your** values:
+The "manifest" is a little ID card that tells Teams about your app. You'll put four of your own values into it, bundle it into a `.zip`, and upload that to Teams.
 
-| Field | Set it to |
-|---|---|
-| `id` | A **new** GUID — run `uuidgen` (don't reuse ours) |
-| `bots[0].botId` | Your **Bot ID** from §7 |
-| `validDomains` | `["YOUR-DOMAIN.vercel.app"]` |
-| `developer.websiteUrl` / `privacyUrl` / `termsOfUseUrl` | URLs on your domain |
+### 8.1 Open the manifest file in your editor
 
-### 8.2 Package the app
-```bash
-cd teams-app
-zip legal-ops.zip manifest.json color.png outline.png
-cd ..
-```
-(`color.png` and `outline.png` are already included. Replace them with your own icons if you like — 192×192 color, 32×32 outline.)
+1. Open **VS Code**.
+2. **File → Open…**, then choose your project folder (the `ms-teams-legal-os` folder you've been working in) and click **Open**.
+3. In the file list on the left, click the **`teams-app`** folder to expand it, then click **`manifest.json`** to open it.
 
-### 8.3 Enable custom app uploads (one-time, admin)
-In the [Teams Admin Center](https://admin.teams.microsoft.com) → **Teams apps** → **Setup policies** → **Global** → turn on **Upload custom apps**. (Developer Program tenants usually have this on already.)
+You'll change four things. To jump to a piece of text, use **Edit → Find** (press **⌘F**) and paste in what you're looking for.
 
-### 8.4 Sideload
-In Microsoft Teams → **Apps** → **Manage your apps** → **Upload an app** → **Upload a custom app** → choose `teams-app/legal-ops.zip`. Add it to a personal chat.
+**Change 1 of 4 — your app's own unique ID**
+
+This app needs a brand-new ID that belongs only to it. You'll generate one in Terminal:
+
+1. Switch to your **Terminal** window (the one open *inside* your project folder — same one from Part 5; if you closed it, reopen it with the drag trick).
+2. Type this and press **Enter**:
+   ```bash
+   uuidgen
+   ```
+3. It prints a line like `A1B2C3D4-5E6F-7890-ABCD-1234567890AB`. **Select that whole line and copy it** (⌘C).
+4. Back in `manifest.json`, find this line near the top:
+   ```json
+   "id": "00000000-0000-0000-0000-000000000000",
+   ```
+   Replace the `00000000-0000-0000-0000-000000000000` (the part **between the quotes**) with the value you just copied. Leave the quotes and comma in place. (The capital letters are fine — don't change them.)
+
+> ⚠️ **Heads-up — two lines look almost identical.** There are **two** lines in this file that read `00000000-0000-0000-0000-000000000000`. The one you just edited is `"id"` (your *app's* ID). The **other** one is `"botId"` and needs a **different** value — that's the very next step. Do **not** paste the same value into both.
+
+**Change 2 of 4 — your Bot ID**
+
+1. Find this line:
+   ```json
+   "botId": "00000000-0000-0000-0000-000000000000",
+   ```
+2. Replace the zeros (between the quotes) with the **Bot ID** you copied back in **Part 7, step 5**. Leave the quotes and comma in place.
+
+**Change 3 of 4 — your website address (fixes 4 spots at once)**
+
+The file mentions a placeholder web address, `your-domain.vercel.app`, in four places. Replace them all in one go:
+
+1. Open **Edit → Replace** (press **⌥⌘F** — that's Option + Command + F). Two boxes appear at the top of the file.
+2. In the **top** box, paste: `your-domain.vercel.app`
+3. In the **bottom** box, type **your real Vercel address** — the same one you've used in earlier parts (for example `legal-ops-abc123.vercel.app`). Type it **without** `https://` and without any slashes.
+4. Click the **Replace All** button (the icon with the two arrows, or press **⌘+Enter**). It should report 4 replacements.
+
+**Change 4 of 4 — your firm's name (optional)**
+
+Find `"name": "Your Company"` and change `Your Company` to your firm's name if you like. This only shows on the app's "About" page, so it's safe to skip.
+
+**Now save the file:** press **⌘S**.
+
+### 8.2 Bundle it into a zip
+
+Teams wants the manifest plus two small icons packed into a single `.zip` file.
+
+1. Go to your **Terminal** window (the one inside the project folder).
+2. Copy-paste this whole block and press **Enter**:
+   ```bash
+   cd teams-app
+   zip legal-ops.zip manifest.json color.png outline.png
+   cd ..
+   ```
+3. You should see three lines that start with `adding:`. That means it worked — you now have a file called **`legal-ops.zip`** inside the `teams-app` folder.
+
+> `color.png` and `outline.png` are placeholder icons that already ship in the folder, so this just works. Want your own logo later? Replace those two files (a 192×192-pixel `color.png` and a 32×32-pixel `outline.png`) and run the `zip` command again.
+
+### 8.3 Allow custom app uploads (one-time, admin)
+
+By default Microsoft 365 blocks uploading your own apps. Turn that on once:
+
+1. Go to the **Teams Admin Center**: [admin.teams.microsoft.com](https://admin.teams.microsoft.com) and sign in with your admin account.
+2. In the left menu, click **Teams apps → Setup policies**.
+3. Click the **Global (Org-wide default)** policy.
+4. Find **Upload custom apps** and switch it **On**, then click **Save** at the bottom.
+
+> Already on? Then skip this — Microsoft 365 Developer Program tenants usually have it enabled. Note: a change here can take a few minutes to take effect.
+
+### 8.4 Upload the app into Teams
+
+1. Open **Microsoft Teams**.
+2. In the left rail, click **Apps**.
+3. At the bottom of that panel, click **Manage your apps**.
+4. Click **Upload an app**, then **Upload a custom app**.
+5. In the file picker, go to your project folder → **`teams-app`** → choose **`legal-ops.zip`**.
+6. When Teams shows the app card, click **Add**. It opens as a personal chat — that's where you'll talk to it.
 
 ---
 
