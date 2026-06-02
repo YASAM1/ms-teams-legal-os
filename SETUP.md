@@ -408,34 +408,38 @@ Teams wants the manifest plus two small icons packed into a single `.zip` file.
 
 ## 9. Push env vars to Vercel and redeploy
 
-Your bot endpoint lives on Vercel, so all the vars must exist there too. Push each one to all three environments:
+Your bot endpoint lives on Vercel, so every variable in your `.env.local` has to exist there too — in all three environments (Production, Preview, Development). **Don't do this one variable at a time.** Pick **one** of the two fast methods below.
+
+### Option A (recommended) — paste them all in the dashboard
+
+This is the easiest: copy your whole file, paste once, done.
+
+1. Open **`.env.local`** in **VS Code**. Click anywhere in it, press **⌘A** to select everything, then **⌘C** to copy.
+2. In your browser, go to **[vercel.com](https://vercel.com)** → click your **project** → **Settings** (top tabs) → **Environment Variables** (left menu).
+3. Click into the **Key** box and **paste** (⌘V). Vercel notices you pasted a whole `.env` file and splits it into one row per variable automatically.
+4. **Delete the `DATABASE_URL` row** if it appears — that one is already managed by the database integration, so you don't want a second copy. (Click the trash/✕ on that row.)
+5. Make sure all three environment checkboxes — **Production**, **Preview**, **Development** — are ticked.
+6. Click **Save**.
+
+### Option B — one command in the terminal
+
+If you'd rather stay in the terminal, we ship a script that pushes every variable to all three environments for you. From your **Terminal** (open inside the project folder), run:
 
 ```bash
-# repeat for EVERY variable in your .env.local
-vercel env add BOT_APP_ID production
-vercel env add BOT_APP_ID preview
-vercel env add BOT_APP_ID development
-# ...and so on for all vars below
+bash scripts/push-env-to-vercel.sh
 ```
 
-**Variables to set** (everything except the Vercel-managed `DATABASE_URL`, which is already there):
+It reads `.env.local`, skips the Vercel-managed `DATABASE_URL`, skips anything you've left blank, and prints a ✓ for each value it sets. Safe to re-run later if you add more variables.
 
-```
-BOT_APP_ID, BOT_APP_PASSWORD, BOT_APP_TYPE, BOT_APP_TENANT_ID
-ENTRA_TENANT_ID, ENTRA_CLIENT_ID, ENTRA_CLIENT_SECRET, GRAPH_REDIRECT_URI
-AUTH_SECRET, AUTH_TRUST_HOST, ADMIN_EMAIL_ALLOWLIST
-ENCRYPTION_KEY, CRON_SECRET, AI_GATEWAY_API_KEY
-CLIO_CLIENT_ID, CLIO_CLIENT_SECRET, CLIO_REDIRECT_URI, CLIO_WEBHOOK_SECRET   (Part 11, optional)
-LANGFUSE_*                                                                   (optional)
-```
+> Either option covers the same list: the `BOT_APP_*`, `ENTRA_*`, `AUTH_*`, `ADMIN_EMAIL_ALLOWLIST`, `ENCRYPTION_KEY`, `CRON_SECRET`, and `AI_GATEWAY_API_KEY` values you've set so far — plus the `CLIO_*` and `LANGFUSE_*` ones later, once you fill them in (Part 11 / optional). Anything still blank is simply skipped until you set it.
 
-> **Faster than 50+ CLI commands:** you can paste all your variables at once in the **Vercel dashboard → your project → Settings → Environment Variables** (it accepts a bulk `.env` paste and lets you tick Production/Preview/Development). Either way works — the CLI loop below is fine if you prefer the terminal.
+### Then redeploy
 
-Then redeploy production so the bot endpoint picks them up:
+So the live bot picks up the new values:
 ```bash
 vercel --prod
 ```
-*(If you connected GitHub in §4.2, a `git push` redeploys instead.)*
+*(If you connected GitHub in §4.2, a `git push` redeploys automatically instead — no command needed.)*
 
 ---
 
