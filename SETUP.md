@@ -465,24 +465,32 @@ Skip this if you just want the basic demo. Required for `/find-matter`, `/intake
 
 1. In Clio → **Settings** → **Developer / App** (or the [Clio Developer Portal](https://app.clio.com/settings/developer_applications)) → create an app.
 2. Set the **Redirect URI** to `https://YOUR-DOMAIN.vercel.app/api/clio/oauth/callback`.
-3. Copy the client ID/secret into `.env.local` (and push to Vercel as in §9):
+3. Copy the client ID/secret into `.env.local`:
    ```ini
    CLIO_CLIENT_ID="<id>"
    CLIO_CLIENT_SECRET="<secret>"
    CLIO_REDIRECT_URI="https://YOUR-DOMAIN.vercel.app/api/clio/oauth/callback"
    CLIO_WEBHOOK_SECRET="<any strong random string you choose>"
    ```
-4. Verify the OAuth config:
+4. **Push all four to Vercel _and redeploy_** (same pattern as §9):
+   ```bash
+   for v in CLIO_CLIENT_ID CLIO_CLIENT_SECRET CLIO_REDIRECT_URI CLIO_WEBHOOK_SECRET; do
+     for env in production preview development; do vercel env add "$v" "$env"; done
+   done
+   vercel --prod   # ← REQUIRED: re-snapshots env vars into a fresh build
+   ```
+   > ⚠️ **Don't skip the redeploy.** Vercel bakes environment variables into a deployment **at build time**. If you add the `CLIO_*` vars but don't redeploy, your live production build still has no `CLIO_CLIENT_ID`, and clicking **Connect Clio** in the next step throws a **500** (`Missing required environment variable: CLIO_CLIENT_ID`). The rule everywhere in this guide: **add an env var → redeploy.** (If you connected GitHub in §4.2, a `git push` redeploys instead.)
+5. Verify the OAuth config:
    ```bash
    pnpm exec dotenv -e .env.local -- tsx scripts/smoke-clio-oauth.ts
    ```
-5. **Connect your Clio account:** go to `https://YOUR-DOMAIN.vercel.app/admin`, sign in with your Entra admin account (must be in `ADMIN_EMAIL_ALLOWLIST`), and click **Connect Clio**. Approve consent.
-6. **Pull your Clio data and build the search index:**
+6. **Connect your Clio account:** go to `https://YOUR-DOMAIN.vercel.app/admin`, sign in with your Entra admin account (must be in `ADMIN_EMAIL_ALLOWLIST`), and click **Connect Clio**. Approve consent.
+7. **Pull your Clio data and build the search index:**
    ```bash
    pnpm exec dotenv -e .env.local -- tsx scripts/run-clio-sync.ts
    pnpm exec dotenv -e .env.local -- tsx scripts/run-embed-matters.ts
    ```
-7. Test in Teams:
+8. Test in Teams:
    ```
    /find-matter smith v jones
    ```
@@ -529,6 +537,9 @@ The four cron jobs are defined in `vercel.ts` and run automatically on Vercel:
 **Can't get into `/admin`**
 - Your sign-in email must be listed in `ADMIN_EMAIL_ALLOWLIST` (and that var must be set on Vercel).
 - The Entra redirect URI `.../api/auth/callback/microsoft-entra-id` must match your domain exactly.
+
+**Clio "connect" gives HTTP 500 (`Missing required environment variable: CLIO_CLIENT_ID`)**
+- The `CLIO_*` vars exist in `.env.local` (and maybe even in Vercel) but you didn't **redeploy** after adding them. Vercel snapshots env vars at build time, so an older deployment never sees them. Fix: `vercel --prod` (or `git push` if GitHub is connected), then retry. See §11 step 4.
 
 **Clio/Outlook "connect" fails or redirect error**
 - The redirect URI registered on the provider app must match the env var **character-for-character**, including `https://` and no trailing slash.
